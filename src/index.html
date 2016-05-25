@@ -2,7 +2,7 @@
 <!-- HTML -->
 <html>
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
     <link rel="stylesheet" type="text/css" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.12/css/dataTables.bootstrap.min.css">
@@ -230,15 +230,17 @@
         $(document)
             .ready(function () {
                 $.ajax({
-                    url: "http://cors.io/?u=http://teamspiel.ch/babyfoot/index.php?gameEnter&admin",
+                    url: "http://crossorigin.me/http://teamspiel.ch/babyfoot/index.php?gameEnter&admin",
+					contentType: "text/plain; charset=ISO-8859-1",
                     dataType: 'text',
                     success: function (data) {
-                        var params = getParameters();
-
+						var params = getParameters();
+						
                         var bojansTable = $("<div>").html(data)[0].querySelectorAll("table#games")[0];
-
-                        $('#data').append(createLeaderBoardTable(createLeaderboard(bojansTable, params.from, params.to), "games", params.minNrOfGames));
-                        $('#games').DataTable({
+						
+						$('#data').append(createLeaderBoardTable(createLeaderboard(bojansTable, params.from, params.to), "games", params.minNrOfGames));
+                        
+						$('#games').DataTable({
                             paging: false,
                             order: [[6, 'desc'], [5, 'asc']]
                         });
@@ -246,7 +248,7 @@
                 });
             });
 
-    </script>
+    </script>	
 </head>
 <body>
     <div id="data">
