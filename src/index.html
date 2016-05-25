@@ -8,6 +8,7 @@
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.12/css/dataTables.bootstrap.min.css">
     <script type="text/javascript" charset="utf8" src="http://cdn.datatables.net/1.10.12/js/jquery.dataTables.js"></script>
     <script type='text/javascript'>
+		//Creates a dictionary where keys are player names and values are their data (games, wins, losses, points, etc..)
         function createLeaderboard(bojansTable, from, to) {
             var leaderBoardData = {};
 
@@ -54,7 +55,7 @@
                     leaderBoardData[playersRight[0]].losses += 1;
                     leaderBoardData[playersRight[1]].losses += 1;
                 }
-                    //draw
+                //draw
                 else if (scoreLeft === scoreRight) {
                     leaderBoardData[playersLeft[0]].points += 1;
                     leaderBoardData[playersLeft[1]].points += 1;
@@ -66,7 +67,7 @@
                     leaderBoardData[playersRight[0]].draws += 1;
                     leaderBoardData[playersRight[1]].draws += 1;
                 }
-                    //loss
+                //loss
                 else {
                     leaderBoardData[playersRight[0]].points += 2;
                     leaderBoardData[playersRight[1]].points += 2;
@@ -80,10 +81,10 @@
 
             return leaderBoardData;
         }
-
-        function createLeaderBoardTable(leaderBoardData, tableName, minimumNrOfGames) {
+		//Creates the actual HTML table code for the leaderboard data
+        function createLeaderBoardTable(leaderBoardData, tableId, minimumNrOfGames) {
             var table = document.createElement("table");
-            table.id = tableName;
+            table.id = tableId;
             table.className = "table table-striped table-bordered";
             table.cellSpacing = 0;
             table.width = "100%";
@@ -189,6 +190,7 @@
             table.appendChild(tbody);
             return table;
         }
+		//Function to retrieve URL query string parameter
         function getParameterByName(name, url) {
             if (!url) url = window.location.href;
             name = name.replace(/[\[\]]/g, "\\$&");
@@ -198,7 +200,7 @@
             if (!results[2]) return '';
             return decodeURIComponent(results[2].replace(/\+/g, " "));
         }
-
+		//Function to initialize application parameters: from, to, min number of games
         function getParameters() {
             var d = new Date();
             d.setMonth(d.getMonth() - 1);
@@ -226,11 +228,11 @@
 
             return params;
         }
-
+		//This gets executed when the page loads
         $(document)
             .ready(function () {
                 $.ajax({
-                    url: "http://crossorigin.me/http://teamspiel.ch/babyfoot/index.php?gameEnter&admin",
+                    url: "http://crossorigin.me/http://teamspiel.ch/babyfoot/index.php?gameEnter&admin", //we need to steal the data via cors proxy, because of XmlHttpRequest cross-domain policy of bojans page.
 					contentType: "text/plain; charset=ISO-8859-1",
                     dataType: 'text',
                     success: function (data) {
@@ -240,6 +242,7 @@
 						
 						$('#data').append(createLeaderBoardTable(createLeaderboard(bojansTable, params.from, params.to), "games", params.minNrOfGames));
                         
+						//This actually tels JQuery DataTable to use the generated table.. this will enable the sorting, searching and the nicer look
 						$('#games').DataTable({
                             paging: false,
                             order: [[6, 'desc'], [5, 'asc']]
