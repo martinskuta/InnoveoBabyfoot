@@ -5,9 +5,8 @@
     <title>Innoveo babyfoot scoreboard</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
-    <link rel="stylesheet" type="text/css" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.12/css/dataTables.bootstrap.min.css">
-    <script type="text/javascript" charset="utf8" src="http://cdn.datatables.net/1.10.12/js/jquery.dataTables.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/r/bs-3.3.5/jq-2.1.4,dt-1.10.8/datatables.min.css" />
+    <script type="text/javascript" src="https://cdn.datatables.net/r/bs-3.3.5/jqc-1.11.3,dt-1.10.8/datatables.min.js"></script>
     <script type='text/javascript'>
         //Creates a dictionary where keys are player names and values are their data (games, wins, losses, points, etc..)
         function createLeaderboard(bojansTable, from, to) {
@@ -335,11 +334,11 @@
 
                         var bojansTable = $("<div>").html(data)[0].querySelectorAll("table#games")[0];
 
-                        $('#data')
+                        $('#scoreboardContainer')
                             .append(createLeaderBoardTable(createLeaderboard(bojansTable, params.from, params.to),
                                 "leaderboard",
                                 params.minNrOfGames));
-                        $('#data').append(createGamesTable(bojansTable, "games", params.from, params.to));
+                        $('#gamesContainer').append(createGamesTable(bojansTable, "games", params.from, params.to));
 
                         //This actually tels JQuery DataTable to enable the sorting, searching and the nicer look on the given tables
                         $('#leaderboard')
@@ -350,7 +349,7 @@
 
                         $('#games')
                             .DataTable({
-                                paging: false,
+                                "lengthMenu": [[100, -1], [100, "All"]],
                                 order: [[0, 'desc']]
                             });
                     }
@@ -358,9 +357,40 @@
             });
 
     </script>
+    <style>
+        .navbar-custom {
+            background-color: #001f54;
+            color: #ffffff;
+            border-radius: 0;
+            min-height: 90px;
+        }
+
+        .navbar-brand > img {
+            max-height: 65px;
+        }
+
+        body {
+            min-height: 2000px;
+            padding-top: 100px;
+        }
+    </style>
 </head>
 <body>
-    <div id="data">
+    <nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#">
+                    <img alt="Innoveo babyfoot" src="./img/innoveo_babyfoot.png">
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <h1>Scoreboard</h1>
+        <div id="scoreboardContainer"></div>
+        <h1>Games</h1>
+        <div id="gamesContainer"></div>
     </div>
 </body>
 </html>
