@@ -2,13 +2,14 @@
 <!-- HTML -->
 <html>
 <head>
+    <title>Innoveo babyfoot scoreboard</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
     <link rel="stylesheet" type="text/css" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.12/css/dataTables.bootstrap.min.css">
     <script type="text/javascript" charset="utf8" src="http://cdn.datatables.net/1.10.12/js/jquery.dataTables.js"></script>
     <script type='text/javascript'>
-		//Creates a dictionary where keys are player names and values are their data (games, wins, losses, points, etc..)
+        //Creates a dictionary where keys are player names and values are their data (games, wins, losses, points, etc..)
         function createLeaderboard(bojansTable, from, to) {
             var leaderBoardData = {};
 
@@ -55,7 +56,7 @@
                     leaderBoardData[playersRight[0]].losses += 1;
                     leaderBoardData[playersRight[1]].losses += 1;
                 }
-                //draw
+                    //draw
                 else if (scoreLeft === scoreRight) {
                     leaderBoardData[playersLeft[0]].points += 1;
                     leaderBoardData[playersLeft[1]].points += 1;
@@ -67,7 +68,7 @@
                     leaderBoardData[playersRight[0]].draws += 1;
                     leaderBoardData[playersRight[1]].draws += 1;
                 }
-                //loss
+                    //loss
                 else {
                     leaderBoardData[playersRight[0]].points += 2;
                     leaderBoardData[playersRight[1]].points += 2;
@@ -81,7 +82,8 @@
 
             return leaderBoardData;
         }
-		//Creates the actual HTML table code for the leaderboard data
+
+        //Creates the actual HTML table code for the leaderboard data
         function createLeaderBoardTable(leaderBoardData, tableId, minimumNrOfGames) {
             var table = document.createElement("table");
             table.id = tableId;
@@ -94,7 +96,7 @@
             var headRow = document.createElement("tr");
 
             var headCell = document.createElement("th");
-            headCell.appendChild(document.createTextNode("Name"));
+            headCell.appendChild(document.createTextNode("Player"));
             headRow.appendChild(headCell);
 
             headCell = document.createElement("th");
@@ -190,7 +192,97 @@
             table.appendChild(tbody);
             return table;
         }
-		//Function to retrieve URL query string parameter
+
+        //Creates the HTML table with games that happened between from and to
+        function createGamesTable(bojansTable, tableId, from, to) {
+
+            var table = document.createElement("table");
+            table.id = tableId;
+            table.className = "table table-striped table-bordered";
+            table.cellSpacing = 0;
+            table.width = "100%";
+
+            //table header
+            var thead = document.createElement("thead");
+            var headRow = document.createElement("tr");
+
+            var date = document.createElement("th");
+            date.appendChild(document.createTextNode("Date"));
+            headRow.appendChild(date);
+
+            var player;
+            for (var l = 1; l < 3; l++) {
+                player = document.createElement("th");
+                player.appendChild(document.createTextNode("Team left " + l));
+                headRow.appendChild(player);
+            }
+
+            for (var l = 1; l < 3; l++) {
+                player = document.createElement("th");
+                player.appendChild(document.createTextNode("Team right " + l));
+                headRow.appendChild(player);
+            }
+
+            var scoreHeader = document.createElement("th");
+            scoreHeader.appendChild(document.createTextNode("Score"));
+            headRow.appendChild(scoreHeader);
+
+            thead.appendChild(headRow);
+            table.appendChild(thead);
+
+            //table data
+            var tbody = document.createElement("tbody");
+            for (var i = 1, row; row = bojansTable.rows[i]; i++) {
+                var dataRow = document.createElement("tr");
+                var dateParts;
+                if (row.cells[0].innerText) {
+                    dateParts = row.cells[0].innerText.split(" ")[0].split(".");
+                }
+                var gameDate = new Date(20 + dateParts[2], dateParts[1] - 1, dateParts[0]);
+                if (gameDate < from || to < gameDate) {
+                    continue;
+                }
+
+                //date
+                var cellData = document.createElement("td");
+                cellData.appendChild(document.createTextNode(gameDate.toDateString()));
+                dataRow.appendChild(cellData);
+
+                //players left
+                var playersLeft = row.cells[2].innerText.split(",");
+                cellData = document.createElement("td");
+                cellData.appendChild(document.createTextNode(playersLeft[0]));
+                dataRow.appendChild(cellData);
+
+                cellData = document.createElement("td");
+                cellData.appendChild(document.createTextNode(playersLeft[1]));
+                dataRow.appendChild(cellData);
+
+                //players right
+                var playersRight = row.cells[4].innerText.split(",");
+                cellData = document.createElement("td");
+                cellData.appendChild(document.createTextNode(playersRight[0]));
+                dataRow.appendChild(cellData);
+
+                cellData = document.createElement("td");
+                cellData.appendChild(document.createTextNode(playersRight[1]));
+                dataRow.appendChild(cellData);
+
+                //score
+                cellData = document.createElement("td");
+                cellData.appendChild(document.createTextNode(row.cells[5].innerText +
+                    row.cells[6].innerText +
+                    row.cells[7].innerText));
+                dataRow.appendChild(cellData);
+
+                tbody.appendChild(dataRow);
+            }
+
+            table.appendChild(tbody);
+            return table;
+        }
+
+        //Function to retrieve URL query string parameter
         function getParameterByName(name, url) {
             if (!url) url = window.location.href;
             name = name.replace(/[\[\]]/g, "\\$&");
@@ -200,7 +292,8 @@
             if (!results[2]) return '';
             return decodeURIComponent(results[2].replace(/\+/g, " "));
         }
-		//Function to initialize application parameters: from, to, min number of games
+
+        //Function to initialize application parameters: from, to, min number of games
         function getParameters() {
             var d = new Date();
             d.setMonth(d.getMonth() - 1);
@@ -228,30 +321,43 @@
 
             return params;
         }
-		//This gets executed when the page loads
+
+        //This gets executed when the page loads
         $(document)
             .ready(function () {
                 $.ajax({
-                    url: "http://crossorigin.me/http://teamspiel.ch/babyfoot/index.php?gameEnter&admin", //we need to steal the data via cors proxy, because of XmlHttpRequest cross-domain policy of bojans page.
-					contentType: "text/plain; charset=ISO-8859-1",
+                    url: "http://crossorigin.me/http://teamspiel.ch/babyfoot/index.php?gameEnter&admin",
+                    //we need to steal the data via cors proxy, because of XmlHttpRequest cross-domain policy of bojans page.
+                    contentType: "text/plain; charset=ISO-8859-1",
                     dataType: 'text',
                     success: function (data) {
-						var params = getParameters();
-						
+                        var params = getParameters();
+
                         var bojansTable = $("<div>").html(data)[0].querySelectorAll("table#games")[0];
-						
-						$('#data').append(createLeaderBoardTable(createLeaderboard(bojansTable, params.from, params.to), "games", params.minNrOfGames));
-                        
-						//This actually tels JQuery DataTable to use the generated table.. this will enable the sorting, searching and the nicer look
-						$('#games').DataTable({
-                            paging: false,
-                            order: [[6, 'desc'], [5, 'asc']]
-                        });
+
+                        $('#data')
+                            .append(createLeaderBoardTable(createLeaderboard(bojansTable, params.from, params.to),
+                                "leaderboard",
+                                params.minNrOfGames));
+                        $('#data').append(createGamesTable(bojansTable, "games", params.from, params.to));
+
+                        //This actually tels JQuery DataTable to enable the sorting, searching and the nicer look on the given tables
+                        $('#leaderboard')
+                            .DataTable({
+                                paging: false,
+                                order: [[6, 'desc'], [5, 'asc']]
+                            });
+
+                        $('#games')
+                            .DataTable({
+                                paging: false,
+                                order: [[0, 'desc']]
+                            });
                     }
                 });
             });
 
-    </script>	
+    </script>
 </head>
 <body>
     <div id="data">
