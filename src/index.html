@@ -193,7 +193,7 @@
                 //probability to win with Artur
                 cellData = document.createElement("td");
                 if (artursScore && artursScore.games > 5 && playerStatistics.games > 5)
-                    cellData.appendChild(document.createTextNode((playerStatistics.wins / playerStatistics.games) * (artursScore.wins / artursScore.games)));
+                    cellData.appendChild(document.createTextNode(((playerStatistics.wins / playerStatistics.games) + (artursScore.wins / artursScore.games)) / 2));
                 else
                     cellData.appendChild(document.createTextNode("0 - not enough data"));
                 dataRow.appendChild(cellData);
