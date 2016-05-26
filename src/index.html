@@ -130,11 +130,17 @@
             headCell.appendChild(document.createTextNode("Probability to loose (losses / games)"));
             headRow.appendChild(headCell);
 
+            headCell = document.createElement("th");
+            headCell.appendChild(document.createTextNode("Probability to win with Artur"));
+            headRow.appendChild(headCell);
+
             thead.appendChild(headRow);
             table.appendChild(thead);
 
             //table data
             var tbody = document.createElement("tbody");
+
+            var artursScore = leaderBoardData["Artur"];
 
             for (var key in leaderBoardData) {
                 var dataRow = document.createElement("tr");
@@ -181,6 +187,13 @@
                 cellData = document.createElement("td");
                 if (playerStatistics.games > 5)
                     cellData.appendChild(document.createTextNode(playerStatistics.losses / playerStatistics.games));
+                else
+                    cellData.appendChild(document.createTextNode("0 - not enough data"));
+                dataRow.appendChild(cellData);
+                //probability to win with Artur
+                cellData = document.createElement("td");
+                if (artursScore && artursScore.games > 5 && playerStatistics.games > 5)
+                    cellData.appendChild(document.createTextNode((playerStatistics.wins / playerStatistics.games) * (artursScore.wins / artursScore.games)));
                 else
                     cellData.appendChild(document.createTextNode("0 - not enough data"));
                 dataRow.appendChild(cellData);
@@ -324,8 +337,10 @@
         //This gets executed when the page loads
         $(document)
             .ready(function () {
+                $("#loading").show();
+
                 $.ajax({
-                    url: "http://crossorigin.me/http://teamspiel.ch/babyfoot/index.php?gameEnter&admin",
+                    url: "http://cors.io?u=http://teamspiel.ch/babyfoot/index.php?gameEnter&admin",
                     //we need to steal the data via cors proxy, because of XmlHttpRequest cross-domain policy of bojans page.
                     contentType: "text/plain; charset=ISO-8859-1",
                     dataType: 'text',
@@ -340,6 +355,8 @@
                                 params.minNrOfGames));
                         $('#gamesContainer').append(createGamesTable(bojansTable, "games", params.from, params.to));
 
+                        $("#loading").hide();
+
                         //This actually tels JQuery DataTable to enable the sorting, searching and the nicer look on the given tables
                         $('#leaderboard')
                             .DataTable({
@@ -352,6 +369,10 @@
                                 "lengthMenu": [[100, -1], [100, "All"]],
                                 order: [[0, 'desc']]
                             });
+                    },
+                    error: function (xhr, status) {
+                        $("#loading").hide();
+                        alert('Unknown error ' + status);
                     }
                 });
             });
@@ -387,10 +408,20 @@
     </nav>
 
     <div class="container-fluid">
-        <h1>Scoreboard</h1>
-        <div id="scoreboardContainer"></div>
-        <h1>Games</h1>
-        <div id="gamesContainer"></div>
+        <div class="row">
+            <h1>Scoreboard</h1>
+            <div id="loading" class="text-center col-md-4 col-md-offset-4">
+                <div>
+                    <img alt="loading" src="./img/loading.gif" />
+                    <h3>Loading data...</h3>
+                </div>
+            </div>
+            <div id="scoreboardContainer" class="col-md-12"></div>
+        </div>
+        <div class="row">
+            <h1>Games</h1>
+            <div id="gamesContainer" class="col-md-12"></div>
+        </div>
     </div>
 </body>
 </html>
