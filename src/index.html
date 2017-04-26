@@ -340,8 +340,8 @@
                 $("#loading").show();
 
                 $.ajax({
-                    url: "http://cors.io?u=http://teamspiel.ch/babyfoot/index.php?gameEnter&admin",
-                    //we need to steal the data via cors proxy, because of XmlHttpRequest cross-domain policy of bojans page.
+                    url: "http://teamspiel.ch/babyfoot/index.php?gameEnter&admin",
+                    crossDomain : true,                    
                     contentType: "text/plain; charset=ISO-8859-1",
                     dataType: 'text',
                     success: function (data) {
