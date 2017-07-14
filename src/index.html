@@ -131,7 +131,7 @@
             headRow.appendChild(headCell);
 
             headCell = document.createElement("th");
-            headCell.appendChild(document.createTextNode("Probability to win with Artur"));
+            headCell.appendChild(document.createTextNode("Probability to win with Pedro"));
             headRow.appendChild(headCell);
 
             thead.appendChild(headRow);
@@ -140,7 +140,7 @@
             //table data
             var tbody = document.createElement("tbody");
 
-            var artursScore = leaderBoardData["Artur"];
+            var pedrosScore = leaderBoardData["Pedro Alves"];
 
             for (var key in leaderBoardData) {
                 var dataRow = document.createElement("tr");
@@ -190,10 +190,10 @@
                 else
                     cellData.appendChild(document.createTextNode("0 - not enough data"));
                 dataRow.appendChild(cellData);
-                //probability to win with Artur
+                //probability to win with Pedro
                 cellData = document.createElement("td");
-                if (artursScore && artursScore.games > 5 && playerStatistics.games > 5)
-                    cellData.appendChild(document.createTextNode(((playerStatistics.wins / playerStatistics.games) + (artursScore.wins / artursScore.games)) / 2));
+                if (pedrosScore && pedrosScore.games > 5 && playerStatistics.games > 5)
+                    cellData.appendChild(document.createTextNode(((playerStatistics.wins / playerStatistics.games) + (pedrosScore.wins / pedrosScore.games)) / 2));
                 else
                     cellData.appendChild(document.createTextNode("0 - not enough data"));
                 dataRow.appendChild(cellData);
